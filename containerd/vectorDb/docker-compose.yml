@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb_server
+    ports:
+      - "8000:8000"  # REST API를 위한 포트 매핑
+    environment:
+      CHROMA_SERVER_MODE: restapi  # REST API 모드 활성화
+      CHROMA_LOG_LEVEL: debug     # 디버깅 로그 활성화
+    volumes:
+      - ./chroma_data:/chroma/.chroma  # 데이터 영구 저장
+    restart: unless-stopped  # 오류 발생 시 재시작 (always 대신 개발 친화적)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"        # 로그 파일 크기 제한
+        max-file: "3"          # 로그 파일 개수 제한
+    healthcheck:  # Chroma 서버 상태 확인
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v2/heartbeat"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+
+  chroma-admin:
+    image: fengzhichao/chromadb-admin:latest
+    ports:
+      - 3000:3000
+    environment:
+      - CHROMA_HOST=http://chromadb:8000

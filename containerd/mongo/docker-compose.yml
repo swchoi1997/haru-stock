@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+  haru-stock-mongo-master:
+    image: mongo
+    container_name: haru-stock-mongo-master
+    restart: always
+    ports:
+      - "27027:27017"
+    volumes:
+      - ./volumes/mongodb:/data/db/mongodb
+      - ./volumes/rs-init/rs-init.sh:/scripts/rs-init.sh
+      - ./volumes/init.js:/scripts/init.js
+    networks:
+      - mongoCluster
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=haru_stock
+    depends_on:
+      - haru-stock-mongo-replica1
+      - haru-stock-mongo-replica2
+    links:
+      - haru-stock-mongo-replica1
+      - haru-stock-mongo-replica2
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs"]
+
+  haru-stock-mongo-replica1:
+    image: mongo
+    container_name: haru-stock-mongo-replica1
+    restart: always
+    ports:
+      - "27028:27017"
+    networks:
+      - mongoCluster
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=haru_stock
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  haru-stock-mongo-replica2:
+    image: mongo
+    container_name: haru-stock-mongo-replica2
+    restart: always
+    ports:
+      - "27029:27017"
+    networks:
+      - mongoCluster
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=haru_stock
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+networks:
+  mongoCluster:
+    driver: bridge
