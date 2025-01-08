@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Environment variables
+.env
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Test reports
+.coverage
+.tox/
+nosetests.xml
+pytest_cache/
+htmlcov/
+
+# Local database files
+*.sqlite3
+*.db
+
+# OS generated files
+.DS_Store
+Thumbs.db
